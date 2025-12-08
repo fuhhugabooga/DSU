@@ -1,0 +1,75 @@
+ID,Label,Type,Ukraine,Strategic
+0,Universitatea de Arhitectură și Urbanism „Ion Mincu” - București,Partner,False,False
+1,Asociația „Societatea Română a Radioamatorilor”,Partner,False,False
+2,Asociația Salvatorilor Voluntari 4x4,Partner,True,False
+3,Institutul Național de Cercetare – dezvoltare Aerospațială „Elie Carafoli” - INCAS,Partner,False,False
+4,Asociația Națională a Salvatorilor Montani din România,Partner,False,False
+5,Asociația Câini de Salvare București,Partner,False,False
+6,Asociația Underdogs,Partner,False,False
+7,Asociația Companiilor Chimice din România (ROMCHIMICA),Partner,False,True
+8,E-Distribuție Banat S.A.,Partner,False,True
+9,E-Distribuție Dobrogea S.A.,Partner,False,True
+10,E-Distribuție Muntenia S.A.,Partner,False,True
+11,Asociația Carusel,Partner,True,False
+12,"Asociația Clubul Câinilor Utilitari
+Asociația Câinii S.A.R. „Gugulania” K9 Mountain Safety Team Caransebeș",Partner,False,False
+13,Serviciul de Ajutor Maltez în România,Partner,True,False
+14,Asociația Serviciul Iezuiţilor pentru Refugiaţi din România – Jesuit Refugee Service (JRS),Partner,True,False
+15,Code 4 Romania,Partner,True,False
+16,Universitatea din București – Facultatea de Geografie,Partner,False,False
+17,Filiala Teritorială București a Ordinului Arhitecților din România,Partner,False,False
+18,Federația Organizațiilor Neguvernamentale pentru Servicii Sociale (FONSS),Partner,True,False
+19,"Universitatea din București, Facultatea de Administrație și Afaceri",Partner,False,False
+20,Asociația Institutul de Cercetare Făgăraș,Partner,True,False
+21,Organizația Salvați Copiii,Partner,True,False
+22,Asociația Rădăuțiul Civic,Partner,True,False
+23,Asociația Asistenților Sociali „AsproAs” și Centrul de Formare și Evaluare în Asistența Socială - CFCECAS,Partner,True,False
+24,Uniunea Nationala a Societatilor de Asigurare si Reasigurare din Romania (UNSAR),Partner,False,False
+25,Asociația Inginerilor Constructori Proiectanți de Structuri,Partner,False,False
+26,Asociația Sistemul National de Reciclare a Bateriilor (SNRB),Partner,False,False
+27,OMV Petrom și Petromed Solution SRL,Partner,False,False
+28,Asociatia Cluburilor Lions District 124 Romania,Partner,False,False
+29,Asociația Camera de Comerț Americană în România (AmCham România),Partner,False,False
+30,Compania Națională de Transport al Energiei Electrice „Transelectrica” - S.A,Partner,False,False
+31,Consiliul Național Român pentru Refugiați (CNRR),Partner,True,False
+32,Federația Națională a Ghizilor de Turism din România (FNGTR),Partner,False,False
+33,Universitatea POLITEHNICA din București,Partner,False,False
+34,Asociația Nevăzătorilor din România (ANR),Partner,False,False
+35,Asociația Națională a Surzilor din România (ANSR),Partner,False,False
+36,Academia de Studii Economice din București,Partner,False,False
+37,Universitatea Babeș-Bolyai,Partner,False,False
+38,Societatea Română de Televiziune (SRTv),Partner,False,False
+39,Asociația „Reducerea Riscului Seismic”,Partner,False,False
+40,Fundația Comunitară București,Partner,False,False
+41,"Asociația pentru Educație, Dezvoltare și Implicarea Tineretului - EDIT",Partner,False,False
+42,Societatea Română de Radiodifuziune (SRR),Partner,False,False
+43,Asociația eLiberare,Partner,False,False
+44,Autoritatea Națională pentru Protecția Drepturilor Persoanelor cu Dizabilități (ANPDPD),Partner,False,False
+45,Consiliul Național al Dizabilității din România (CNDR),Partner,False,False
+46,Habitat for Humanity Romania,Partner,True,False
+47,Societatea Națională de Cruce Roșie din România (SNCRR),Partner,True,False
+48,Asociația Make Better,Partner,False,False
+49,Asociația Energia Inteligentă,Partner,False,False
+50,Global Focus,Partner,False,False
+51,Colegiul Psihologilor din România,Partner,False,False
+52,Asociația pentru Câini de Salvare Transilvania,Partner,False,False
+dom_0,Dezastre chimice,Domain,False,False
+dom_1,Căutare-salvare,Domain,False,False
+dom_2,Cercetare,Domain,False,False
+dom_3,Prevenire trafic persoane,Domain,False,False
+dom_4,Prevenire,Domain,False,False
+dom_5,- încheiat la nivel strategic,Domain,False,False
+dom_6,Căutare - salvare,Domain,False,False
+dom_7,Intervenție Căutare-salvare,Domain,False,False
+dom_8,Pregătire,Domain,False,False
+dom_9,Căutare –intervenție aeriană,Domain,False,False
+dom_10,Prevenirea si combaterea dezinformării și manipulării informaționale,Domain,False,False
+dom_11,identificare victime de către cadrele medicale,Domain,False,False
+dom_12,Sprijin pentru protejarea și refacerea locuințelor afectate,Domain,False,False
+dom_13,Intervenție,Domain,False,False
+dom_14,Restabilirea stării de normalitate,Domain,False,False
+dom_15,Pregătire (practică studenți),Domain,False,False
+dom_16,Răspuns,Domain,False,False
+dom_17,Servicii sociale,Domain,False,False
+dom_18,IT & C,Domain,False,False
+dom_19,Cercetare în cadrul unui proiect,Domain,False,False
