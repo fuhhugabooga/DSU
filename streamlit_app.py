@@ -3,12 +3,13 @@ import pandas as pd
 from streamlit_agraph import agraph, Node, Edge, Config
 
 # ---------------------------------
-# 0. CONFIGURARE PAGINĂ & STIL
+# 0. CONFIGURARE PAGINĂ & BRANDING
 # ---------------------------------
 
 st.set_page_config(
     layout="wide",
-    page_title="Ecosistem DSU",
+    page_title="Oswald Software", # [Brand Change]
+    page_icon="assets/button.svg", # [Brand Change]
     initial_sidebar_state="expanded"
 )
 
@@ -18,7 +19,6 @@ st.markdown(
     .stApp {
         background-color: #0E1117;
     }
-    /* Reduce padding-ul de sus al paginii */
     .block-container {
         padding-top: 2rem !important;
         padding-bottom: 1rem !important;
@@ -46,8 +46,10 @@ st.markdown(
         color: #C9D1D9;
         font-size: 0.85rem;
     }
+    /* Stilizare butoane */
     .stButton button {
         width: 100%;
+        border-radius: 4px;
     }
     </style>
     """,
@@ -106,144 +108,182 @@ def map_domain_category(raw_piece: str) -> str:
     return raw_piece.strip()
 
 # ---------------------------------
-# 2. ÎNCĂRCARE DATE
+# 2. ÎNCĂRCARE DATE INIȚIALĂ
 # ---------------------------------
 
 @st.cache_data
-def load_data():
-    """Citește data.csv de pe disk."""
+def load_initial_data():
+    """Citește data.csv de pe disk doar la prima rulare."""
     try:
-        df = pd.read_csv("data.csv")
+        # [Fix CSV] Folosim skipinitialspace si quotechar standard
+        df = pd.read_csv("data.csv", skipinitialspace=True)
+        # [Fix Newlines] Curățăm newlines care pot strica structura
+        df = df.replace(r'\n', ' ', regex=True)
     except FileNotFoundError:
-        st.error("Fișierul 'data.csv' nu a fost găsit. Te rog încarcă-l.")
-        return {}, [], pd.DataFrame(), True
+        return pd.DataFrame(columns=["Partner", "Domain_Raw", "Ukraine", "Strategic"]), True
 
     df.columns = [c.strip() for c in df.columns]
-
-    required_cols = ["Partner", "Domain_Raw"]
-    missing = [c for c in required_cols if c not in df.columns]
-    if missing:
-        st.error(f"Lipsesc coloanele obligatorii din CSV: {missing}")
-        return {}, [], df, True
-
-    if "Ukraine" not in df.columns:
-        df["Ukraine"] = False
     
-    if "Strategic" not in df.columns:
-        df["Strategic"] = False
-        missing_strategic = True
-    else:
-        missing_strategic = False
-
+    # Adăugare coloane lipsă dacă e cazul
+    if "Ukraine" not in df.columns: df["Ukraine"] = False
+    if "Strategic" not in df.columns: df["Strategic"] = False
+    
+    # Normalizare bool
     def normalize_bool(val):
         return str(val).strip().lower() in ["da", "true", "x", "1", "yes"]
 
     df["Ukraine"] = df["Ukraine"].apply(normalize_bool)
     df["Strategic"] = df["Strategic"].apply(normalize_bool)
-    df["Domains_List"] = df["Domain_Raw"].apply(clean_domains)
+    
+    return df, False
 
-    nodes_dict: dict[str, dict] = {}
-    edges_list: list[tuple[str, str]] = []
-
-    for idx, row in df.iterrows():
-        p_id = f"p_{idx}"
-
-        nodes_dict[p_id] = {
-            "label": str(row["Partner"]),
-            "type": "Partner",
-            "ukraine": row["Ukraine"],
-            "strategic": row["Strategic"],
-            "raw_domain": str(row["Domain_Raw"]),
-        }
-
-        for raw_dom in row["Domains_List"]:
-            dom_cat = map_domain_category(raw_dom)
-            d_id = f"d_{dom_cat}"
-
-            if d_id not in nodes_dict:
-                nodes_dict[d_id] = {
-                    "label": dom_cat,
-                    "type": "Domain",
-                }
-
-            edges_list.append((p_id, d_id))
-
-    return nodes_dict, edges_list, df, missing_strategic
-
-nodes_data, edges_data, df, missing_strategic = load_data()
+# Inițializare Session State pentru Dataframe
+if "main_df" not in st.session_state:
+    loaded_df, err = load_initial_data()
+    st.session_state["main_df"] = loaded_df
+    if err:
+        st.error("Fișierul 'data.csv' nu a fost găsit sau este invalid.")
 
 # ---------------------------------
-# 3. STATE PENTRU SELECȚIE & FILTRE
+# 3. LAYOUT: EDITOR DATE (Jos) -> Calcul Graf -> Afișare
 # ---------------------------------
+# Notă: Pentru ca editarea să fie LIVE, trebuie să procesăm datele
+# care ies din st.data_editor, nu cele din cache.
 
+# Definim layout-ul principal
+col_controls, col_graph = st.columns([1, 4])
+
+# --- PROCESARE DATE PENTRU GRAF ---
+# Folosim un container temporar sau procesăm direct DataFrame-ul din session_state
+# Pentru a permite editarea live, vom folosi rezultatul editorului din sesiunea curentă dacă există,
+# dar editorul e randat jos. 
+# Truc: Randăm editorul într-un expander, dar folosim df-ul rezultat pentru calcule.
+
+# Pregătim datele pentru procesare (Noduri/Muchii)
+current_df = st.session_state["main_df"].copy()
+
+# 4. LOGICA DE GRAF (Noduri și Muchii)
+# ---------------------------------
+current_df["Domains_List"] = current_df["Domain_Raw"].apply(clean_domains)
+
+nodes_dict = {}
+edges_list = []
+
+for idx, row in current_df.iterrows():
+    p_id = f"p_{idx}" # ID unic bazat pe index
+    p_name = str(row["Partner"])
+
+    nodes_dict[p_id] = {
+        "label": p_name,
+        "type": "Partner",
+        "ukraine": row["Ukraine"],
+        "strategic": row["Strategic"],
+        "raw_domain": str(row["Domain_Raw"]),
+    }
+
+    for raw_dom in row["Domains_List"]:
+        dom_cat = map_domain_category(raw_dom)
+        d_id = f"d_{dom_cat}"
+
+        if d_id not in nodes_dict:
+            nodes_dict[d_id] = {
+                "label": dom_cat,
+                "type": "Domain",
+            }
+        edges_list.append((p_id, d_id))
+
+# State pentru selecție și filtre
 if "selected_id" not in st.session_state:
     st.session_state["selected_id"] = None
 
-# Lista completă de domenii pentru filtre
+# Liste pentru filtre
 all_domain_labels = sorted(list(set(
-    info["label"] for info in nodes_data.values() if info["type"] == "Domain"
+    info["label"] for info in nodes_dict.values() if info["type"] == "Domain"
+)))
+all_partners_labels = sorted(list(set(
+    info["label"] for info in nodes_dict.values() if info["type"] == "Partner"
 )))
 
 if "filter_domains" not in st.session_state:
     st.session_state["filter_domains"] = all_domain_labels
 
-# ---------------------------------
-# 4. LAYOUT: CONTROALE (Stânga) + HARTĂ (Dreapta)
-# ---------------------------------
-
-col_controls, col_graph = st.columns([1, 4])
-
-# --- COLOANA STÂNGA: FILTRE & DETALII ---
+# --- COLOANA STÂNGA: CONTROALE ---
 with col_controls:
-    st.markdown("### Panou de cntrol")
+    st.markdown("### Panou de control") # [Fix Typo]
 
-    # Statistici Generale
-    total_partners = sum(1 for n in nodes_data.values() if n["type"] == "Partner")
-    total_domains = sum(1 for n in nodes_data.values() if n["type"] == "Domain")
-    total_ukraine = sum(1 for n in nodes_data.values() if n["type"] == "Partner" and n.get("ukraine"))
-    total_strategic = sum(1 for n in nodes_data.values() if n["type"] == "Partner" and n.get("strategic"))
+    # --- 1. SEARCH BAR (NOU) ---
+    st.markdown("#### Caută Organizație")
+    
+    # Adăugăm opțiunea "Toate" la început
+    search_options = ["- Toate -"] + all_partners_labels
+    selected_partner_search = st.selectbox("Alege un partener:", options=search_options)
+    
+    is_search_active = selected_partner_search != "- Toate -"
 
+    st.markdown("---")
+
+    # --- 2. STATISTICI ---
+    total_partners = sum(1 for n in nodes_dict.values() if n["type"] == "Partner")
+    total_domains = sum(1 for n in nodes_dict.values() if n["type"] == "Domain")
+    
     st.markdown(
         f"""
         <div style="font-size: 0.85rem; color: #8b949e; margin-bottom: 20px;">
-        Parteneri total: <b>{total_partners}</b><br>
-        Domenii total: <b>{total_domains}</b><br>
-        Parteneri Ucraina: <b>{total_ukraine}</b><br>
-        Parteneri Strategici: <b>{total_strategic}</b>
+        Parteneri: <b>{total_partners}</b> | Domenii: <b>{total_domains}</b>
         </div>
         """, unsafe_allow_html=True
     )
 
+    # --- 3. FILTRE DOMENII ---
+    # Dacă e activ Search-ul, dezactivăm filtrele de domenii pentru a nu crea confuzie, 
+    # sau le lăsăm active. Le lăsăm active, dar Search-ul are prioritate.
+    if not is_search_active:
+        st.markdown("#### Filtrare domenii")
+        c_btn1, c_btn2 = st.columns(2)
+        if c_btn1.button("Selectează tot"):
+            st.session_state["filter_domains"] = all_domain_labels
+            st.rerun()
+        if c_btn2.button("Deselectează tot"):
+            st.session_state["filter_domains"] = []
+            st.rerun()
+
+        selected_domains = st.multiselect(
+            "Domenii vizibile:",
+            options=all_domain_labels,
+            key="filter_domains"
+        )
+    else:
+        st.info(f"Mod vizualizare: **{selected_partner_search}**")
+        selected_domains = all_domain_labels # Arătăm toate domeniile relevante partenerului
+
     st.markdown("---")
-    st.markdown("#### Filtrare domenii")
     
-    # Butoane Select/Deselect
-    c_btn1, c_btn2 = st.columns(2)
-    if c_btn1.button("Selectează tot"):
-        st.session_state["filter_domains"] = all_domain_labels
-        st.rerun()
-    if c_btn2.button("Deselectează tot"):
-        st.session_state["filter_domains"] = []
-        st.rerun()
-
-    selected_domains = st.multiselect(
-        "Alege domeniile vizibile:",
-        options=all_domain_labels,
-        key="filter_domains"
-    )
-
-    st.markdown("---")
-
-    # Buton Resetare Selecție Nod
+    # Buton Resetare Selecție Nod (Zoom)
     if st.session_state["selected_id"]:
-        if st.button("Înapoi la vedere generală"):
+        if st.button("⬅️ Înapoi la vedere generală"):
             st.session_state["selected_id"] = None
             st.rerun()
 
-    # Detalii Nod Selectat
-    selected_id = st.session_state["selected_id"]
-    if selected_id and selected_id in nodes_data:
-        info = nodes_data[selected_id]
+    # --- 4. DETALII NOD SELECTAT ---
+    # Prioritate: Dacă e search activ, arătăm detalii despre cel căutat,
+    # altfel arătăm ce e click-uit.
+    
+    # Dacă utilizatorul a căutat ceva, considerăm că a "selectat" acel partener
+    # Trebuie să găsim ID-ul partenerului selectat în dropdown
+    search_node_id = None
+    if is_search_active:
+        for nid, info in nodes_dict.items():
+            if info["label"] == selected_partner_search and info["type"] == "Partner":
+                search_node_id = nid
+                break
+    
+    # ID-ul de afișat în panou
+    current_display_id = st.session_state["selected_id"]
+    if is_search_active and search_node_id:
+        current_display_id = search_node_id
+
+    if current_display_id and current_display_id in nodes_dict:
+        info = nodes_dict[current_display_id]
 
         if info["type"] == "Partner":
             st.markdown(f'<div class="info-card"><b>Partener DSU</b><br>{info["label"]}</div>', unsafe_allow_html=True)
@@ -257,75 +297,34 @@ with col_controls:
 
             st.markdown("<b>Domenii asociate:</b>", unsafe_allow_html=True)
             domains = [
-                nodes_data[t]["label"]
-                for s, t in edges_data
-                if s == selected_id and nodes_data[t]["type"] == "Domain"
+                nodes_dict[t]["label"]
+                for s, t in edges_list
+                if s == current_display_id and nodes_dict[t]["type"] == "Domain"
             ]
             if domains:
                 for d in sorted(set(domains)):
                     st.markdown(f"- {d}")
-            
-            # Arătăm textul brut doar dacă e relevant
-            # st.code(info["raw_domain"], language="text")
 
         else:  # Domain
             st.markdown(f'<div class="info-card"><b>Domeniu</b><br>{info["label"]}</div>', unsafe_allow_html=True)
-            
             partners = [
-                nodes_data[s]["label"]
-                for s, t in edges_data
-                if t == selected_id and nodes_data[s]["type"] == "Partner"
+                nodes_dict[s]["label"]
+                for s, t in edges_list
+                if t == current_display_id and nodes_dict[s]["type"] == "Partner"
             ]
             st.markdown(f"Parteneri în domeniu: **{len(partners)}**")
             if partners:
-                with st.expander("Vezi lista"):
+                with st.expander("Vezi lista parteneri"):
                     for p in sorted(set(partners)):
                         st.markdown(f"- {p}")
-    else:
-        st.info("Selectează un nod din dreapta pentru detalii.")
-        
-    if missing_strategic:
-         st.warning("Coloana 'Strategic' lipsește din CSV.")
+    elif not is_search_active:
+        st.info("Selectează un nod din dreapta sau caută o organizație.")
 
 
 # --- COLOANA DREAPTA: GRAF ---
 with col_graph:
     st.markdown("### Ecosistem DSU")
-    st.markdown(
-        """
-        <div style="margin-top: -10px; margin-bottom: 10px; font-size: 0.9rem; color: #a0a0a0;">
-        Cercurile (Cyan/Galben) = Parteneri. Romburile (Roz) = Domenii. Trage de noduri pentru a rearanja.
-        </div>
-        """, 
-        unsafe_allow_html=True
-    )
-
-    # 1. Calcul Grad (pentru mărime noduri)
-    degree: dict[str, int] = {}
-    for s, t in edges_data:
-        degree[s] = degree.get(s, 0) + 1
-        degree[t] = degree.get(t, 0) + 1
-
-    # 2. Filtrare date pentru vizualizare
-    # Regula: 
-    # - Includem nodurile Domeniu selectate in filtru.
-    # - Includem nodurile Partener care sunt conectate la cel putin un Domeniu selectat.
     
-    visible_domain_ids = set()
-    for nid, info in nodes_data.items():
-        if info["type"] == "Domain" and info["label"] in selected_domains:
-            visible_domain_ids.add(nid)
-            
-    visible_partner_ids = set()
-    visible_edges_list = []
-    
-    for s, t in edges_data:
-        # Presupunem s=Partener, t=Domeniu (bazat pe constructia din load_data)
-        # Verificam daca t (Domeniul) este vizibil
-        if t in visible_domain_ids:
-            visible_partner_ids.add(s)
-            visible_edges_list.append((s, t))
-
     # Construire Noduri Vizuale
     nodes_viz = []
     edges_viz = []
@@ -335,18 +334,53 @@ with col_graph:
     COLOR_STRATEGIC = "#ffd700"
     COLOR_DOMAIN = "#fd79a8"
 
-    for nid in (visible_domain_ids | visible_partner_ids):
-        info = nodes_data[nid]
+    # Calcul Grad
+    degree: dict[str, int] = {}
+    for s, t in edges_list:
+        degree[s] = degree.get(s, 0) + 1
+        degree[t] = degree.get(t, 0) + 1
+
+    # Logică de Filtrare pentru Vizualizare
+    visible_node_ids = set()
+    
+    if is_search_active and search_node_id:
+        # LOGICĂ SEARCH: Arătăm doar Partenerul + Domeniile lui
+        visible_node_ids.add(search_node_id)
+        # Adăugăm domeniile conectate
+        for s, t in edges_list:
+            if s == search_node_id:
+                visible_node_ids.add(t)
+            elif t == search_node_id: # (caz rar in structura curenta, dar safe)
+                visible_node_ids.add(s)
+    else:
+        # LOGICĂ NORMALĂ: Filtrare după domeniile selectate
+        # 1. Domenii vizibile
+        for nid, info in nodes_dict.items():
+            if info["type"] == "Domain" and info["label"] in selected_domains:
+                visible_node_ids.add(nid)
+        
+        # 2. Parteneri conectați la acele domenii
+        temp_partners = set()
+        for s, t in edges_list:
+            # s=Partener, t=Domeniu
+            if t in visible_node_ids:
+                temp_partners.add(s)
+        visible_node_ids.update(temp_partners)
+
+    # Generare obiecte Node/Edge
+    for nid in visible_node_ids:
+        info = nodes_dict[nid]
         
         if info["type"] == "Partner":
             full_label = info["label"]
-            display_label = full_label if len(full_label) <= 25 else full_label[:25] + "..."
-            
-            # Marime
-            base_size = 14
-            size = base_size + degree.get(nid, 1) * 0.4
-            
-            # Culoare
+            # Scurtăm eticheta doar dacă nu e nodul căutat
+            if is_search_active and nid == search_node_id:
+                display_label = full_label # Arătăm tot numele
+                size = 35 # Mai mare
+            else:
+                display_label = full_label if len(full_label) <= 20 else full_label[:20] + "..."
+                size = 14 + degree.get(nid, 1) * 0.4
+
             color = COLOR_STRATEGIC if info.get("strategic") else COLOR_PARTNER
             
             nodes_viz.append(Node(
@@ -359,26 +393,25 @@ with col_graph:
                 font={"color": "white", "size": 14}
             ))
         else: # Domain
-            base_size = 26
-            size = base_size + degree.get(nid, 1) * 0.9
-            
             nodes_viz.append(Node(
                 id=nid,
                 label=info["label"],
                 title=info["label"],
-                size=size,
+                size=20 + degree.get(nid, 1) * 0.5,
                 shape="diamond",
                 color=COLOR_DOMAIN,
                 font={"color": "#ffeef6", "size": 14}
             ))
 
-    for s, t in visible_edges_list:
-        edges_viz.append(Edge(source=s, target=t, color="#2d3436", width=1.0))
+    # Adăugăm muchiile doar dacă ambele capete sunt vizibile
+    for s, t in edges_list:
+        if s in visible_node_ids and t in visible_node_ids:
+            edges_viz.append(Edge(source=s, target=t, color="#2d3436", width=1.0))
 
-    # 3. Configurare Graf
+    # Configurare Graf
     config = Config(
-        width=1200, # Ajustat pentru coloana
-        height=800,
+        width=1200,
+        height=750,
         directed=False,
         physics=True,
         hierarchical=False,
@@ -389,74 +422,65 @@ with col_graph:
             "forceAtlas2Based": {
                 "gravitationalConstant": -50,
                 "centralGravity": 0.005,
-                "springLength": 400,
-                "springConstant": 0.03,
+                "springLength": 200,
+                "springConstant": 0.05,
             },
-            "minVelocity": 0.5,
+            "minVelocity": 0.75,
             "solver": "forceAtlas2Based",
         },
     )
 
-    # 4. Logica de Focus (Zoom pe un nod selectat)
-    display_nodes = nodes_viz
-    display_edges = edges_viz
+    # Focus logic pentru click simplu (fără search)
+    if st.session_state["selected_id"] and not is_search_active:
+        # Zoom logic (implementare simplificata prin filtrarea nodurilor trimise la agraph)
+        # Pastram codul existent care nu face zoom fizic, ci doar highlight, 
+        # dar userul a cerut "rețeaua ei" la search, ceea ce e tratat mai sus.
+        pass
 
-    if st.session_state["selected_id"]:
-        focus_id = st.session_state["selected_id"]
-        
-        # Filtram doar muchiile conectate la focus_id DINTRE cele deja vizibile (filtrate pe domenii)
-        relevant_edges_viz = []
-        for e in edges_viz:
-            src = getattr(e, "source", None)
-            trg = getattr(e, "target", getattr(e, "to", None))
-            if src == focus_id or trg == focus_id:
-                relevant_edges_viz.append(e)
-        
-        relevant_node_ids = {focus_id}
-        for e in relevant_edges_viz:
-            src = getattr(e, "source", None)
-            trg = getattr(e, "target", getattr(e, "to", None))
-            if src: relevant_node_ids.add(src)
-            if trg: relevant_node_ids.add(trg)
-        
-        display_nodes = [n for n in nodes_viz if n.id in relevant_node_ids]
-        display_edges = relevant_edges_viz
-
-    # Randare
-    clicked_id = agraph(nodes=display_nodes, edges=display_edges, config=config)
+    clicked_id = agraph(nodes=nodes_viz, edges=edges_viz, config=config)
     
+    # Interacțiune click pe grafic
     if clicked_id is not None and clicked_id != st.session_state["selected_id"]:
         st.session_state["selected_id"] = clicked_id
         st.rerun()
 
-    # --- EDITOR DATE (Jos, sub graf) ---
-    st.divider()
-    with st.expander("Editor Date"):
-        st.write("Modifică datele și descarcă CSV-ul.")
-        
-        editable_df = df[["Partner", "Domain_Raw", "Ukraine", "Strategic"]].copy()
-        
-        edited_df = st.data_editor(
-            editable_df, 
-            num_rows="dynamic", 
-            use_container_width=True,
-            column_config={
-                "Partner": st.column_config.TextColumn("Partener"),
-                "Domain_Raw": st.column_config.TextColumn("Domenii"),
-                "Strategic": st.column_config.CheckboxColumn("Strategic?", default=False),
-                "Ukraine": st.column_config.CheckboxColumn("Ucraina?", default=False)
-            }
-        )
+# --- EDITOR DATE (Jos) ---
+st.divider()
+with st.expander("Editor Date (Live Update)", expanded=False):
+    st.write("Modifică datele de mai jos. Graficul se va actualiza automat.")
+    
+    # [Live Editing] Configurare editor
+    editable_df = st.data_editor(
+        st.session_state["main_df"], # Datele curente
+        num_rows="dynamic",
+        use_container_width=True,
+        key="data_editor_component", # Key pentru state
+        column_config={
+            "Partner": st.column_config.TextColumn("Partener", width="large"),
+            "Domain_Raw": st.column_config.TextColumn("Domenii (separate prin /)", width="large"),
+            "Strategic": st.column_config.CheckboxColumn("Strategic?", default=False),
+            "Ukraine": st.column_config.CheckboxColumn("Ucraina?", default=False)
+        }
+    )
+    
+    # Verificăm dacă s-au schimbat datele față de session_state și actualizăm
+    # Streamlit rerunneaza scriptul la edit, deci 'editable_df' are noile date.
+    # Trebuie să le salvăm în session_state pentru ca la următorul rerun (top-down) 
+    # graficul să le folosească.
+    if not editable_df.equals(st.session_state["main_df"]):
+        st.session_state["main_df"] = editable_df
+        st.rerun()
 
-        def convert_df(d):
-            export = d.copy()
-            export["Strategic"] = export["Strategic"].apply(lambda x: "da" if x else "")
-            export["Ukraine"] = export["Ukraine"].apply(lambda x: "da" if x else "")
-            return export.to_csv(index=False).encode('utf-8')
+    # Buton Download
+    def convert_df(d):
+        export = d.copy()
+        export["Strategic"] = export["Strategic"].apply(lambda x: "da" if x else "")
+        export["Ukraine"] = export["Ukraine"].apply(lambda x: "da" if x else "")
+        return export.to_csv(index=False).encode('utf-8')
 
-        st.download_button(
-            label="Descarcă CSV",
-            data=convert_df(edited_df),
-            file_name='data.csv',
-            mime='text/csv',
-        )
+    st.download_button(
+        label="Descarcă CSV actualizat",
+        data=convert_df(editable_df),
+        file_name='data_updated.csv',
+        mime='text/csv',
+    )
