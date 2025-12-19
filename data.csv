@@ -1,65 +1,64 @@
-Partner,Domain_Raw,Ukraine,Strategic
-Asociația Asistenților Sociali „AsproAs” și Centrul de Formare și Evaluare în Asistența Socială - CFCECAS,Pregătire/ Intervenție,da,
-Academia de Studii Economice din București,Prevenire,,
-Asociația „Societatea Română a Radioamatorilor”,Intervenție,,
-Habitat for Humanity Romania,Prevenire/ Intervenție Sprijin pentru protejarea și refacerea locuințelor afectate,da,
-Societatea Națională de Cruce Roșie din România (SNCRR),Prevenire/ Pregătire,da,da
-Universitatea Babeș-Bolyai,Prevenire,,
-Asociația Națională a Salvatorilor Montani din România,Intervenție Căutare-salvare,,
-Societatea Română de Televiziune (SRTv),Prevenire,,
-Serviciul de Ajutor Maltez în România,Intervenție/ Căutare-salvare,da,da
-Asociația Salvatorilor Voluntari 4x4,Intervenție/ Căutare - salvare,da,
-OMV Petrom și Petromed Solution SRL,Pregătire/ Prevenire/ Intervenție,,
-Asociația Companiilor Chimice din România (ROMCHIMICA),Intervenție/ Dezastre chimice,,da
-Asociația „Reducerea Riscului Seismic”,Prevenire,,
-Code 4 Romania,IT & C,da,
-Fundația Comunitară București,Pregătire/ Prevenire,,
-Serviciul de Telecomunicații Speciale (STS),Prevenire/ Intervenție,da,da
-Institutul Național de Cercetare – dezvoltare Aerospațială „Elie Carafoli” - INCAS,Intervenție/ Căutare –intervenție aeriană,,
-Asociația SALVO,Intervenție/ Servicii sociale,,
-Compania Națională de Transport al Energiei Electrice „Transelectrica” - SA,Intervenție/ Restabilirea stării de normalitate,da,
-E-Distribuție Banat S.A.,Intervenție/ Restabilirea stării de normalitate,,
-E-Distribuție Muntenia S.A.,Intervenție/ Restabilirea stării de normalitate,,
-E-Distribuție Dobrogea S.A.,Intervenție/ Restabilirea stării de normalitate,,
-Universitatea de Arhitectură și Urbanism „Ion Mincu” - București,Cercetare în cadrul unui proiect,,
-Asociația Asociația Medicală Română,Pregătire/ Cercetare,,
-Universitatea de Medicină și Farmacie „Carol Davila” - București,Pregătire/ Cercetare,,
-Universitatea de Medicină și Farmacie din Craiova,Pregătire/ Cercetare,,
-Universitatea de Medicină și Farmacie „Iuliu Hațieganu” - Cluj-Napoca,Pregătire/ Cercetare,,
-Universitatea de Medicină și Farmacie „Grigore T. Popa” - Iași,Pregătire/ Cercetare,,
-Universitatea de Medicină Farmacie Științe și Tehnologie „George Emil Palade” din Târgu-Mureș,Pregătire/ Cercetare,,
-Universitatea de Medicină și Farmacie „Victor Babeș” - Timișoara,Pregătire/ Cercetare,,
-Fundația Estuar,Pregătire/ Răspuns,,
-Asociația CSR Nest,Pregătire/ Prevenire,,
-Organizația Salvați Copiii,Prevenire,,
-Societatea de Științe Istorice din România – filiala București,Prevenire,,
-Societatea Română de Radiodifuziune,Prevenire,,
-Asociația Română pentru Smart City,Prevenire,,
-Asociația Studenților la Construcții din București,Prevenire,,
-Asociația Proacta EDU,Prevenire,,
-Asociația eLiberare,Prevenire  Prevenire trafic persoane/ identificare victime de către cadrele medicale,,
-Institutul pentru Studiul și Tratamentul Traumei,Prevenire,,
-Asociația Energie Inteligentă,Prevenire/ Pregătire,,
-Global Focus,Prevenirea si combaterea dezinformării și manipulării informaționale,,
-Colegiul Psihologilor din România,Răspuns,,
-Asociația Câini de Salvare București,Intervenție Căutare-salvare,,
-Asociația Underdogs,Intervenție Căutare-salvare,,
-Asociația Clubul Câinilor Utilitari Asociația Câinii S.A.R. „Gugulania” K9 Mountain Safety Team Caransebeș,Intervenție Căutare-salvare,,
-AUTONOM,Sprijin tehnic logistic,,
-Asociația Institutul de Cercetare Făgăraș,Pregătire/ Cercetare,da,
-Universitatea POLITEHNICA din București,Pregătire/Cercetare,,
-Asociația Cluburilor Lions District 124 Romania,Pregătire/ Prevenire/ Intervenție,,
-Asociația Camera de Comerț Americană în România (AmCham România),Pregătire/ Prevenire/ Intervenție,,
-Uniunea Nationala a Societatilor de Asigurare si Reasigurare din Romania (UNSAR),Pregătire/ Prevenire,,
-Universitatea din București Facultatea de Administrație și Afaceri ,Pregătire (practică studenți)/ Cercetare,,
-Asociația Sistemul National de Reciclare a Bateriilor (SNRB),Pregătire/ Prevenire/,,
-Societatea Națională de Cruce Roșie din România (SNCRR) – IFRC,Intervenție,da,
-Societatea Națională de Cruce Roșie din România (SNCRR) – ICRC,Intervenție,da,
-Consiliul Național Român pentru Refugiați (CNRR),Pregătire/ Răspuns,da,
-Federația Națională a Ghizilor de Turism din România (FNGTR),Pregătire/ Răspuns,,
-Asociația Nevăzătorilor din România (ANR),Pregătire/Răspuns,,
-Asociația Națională a Surzilor din România (ANSR),Pregătire/Răspuns,,
-Asociația Serviciul Iezuiţilor pentru Refugiaţi din România – Jesuit Refugee Service (JRS),Intervenție/Servicii sociale,da,
-Asociația Make Better,Prevenire / Pregătire,,
-Consiliul Național al Dizabilității din România (CNDR),Prevenire/ Pregătire,,
-Autoritatea Națională pentru Protecția Drepturilor Persoanelor cu Dizabilități (ANPDPD),Prevenire/ Pregătire,,
+Partner,Domain_Raw,Ukraine,Strategic,Description
+Asociația Asistenților Sociali „AsproAs” și Centrul de Formare și Evaluare în Asistența Socială - CFCECAS,Pregătire/ Intervenție,da,False,"Organizație axată pe Pregătire și Intervenție, oferind formare și suport specializat în domeniul asistenței sociale, inclusiv în contextul crizei din Ucraina."
+Academia de Studii Economice din București,Prevenire,False,False,"Instituție academică implicată în activități de Prevenire, contribuind prin educație și studii economice la reziliența comunității."
+Asociația „Societatea Română a Radioamatorilor”,Intervenție,False,False,"Asociație care asigură comunicații alternative de urgență, activând în zona de Intervenție pentru menținerea fluxului informațional critic."
+Habitat for Humanity Romania,Prevenire/ Intervenție Sprijin pentru protejarea și refacerea locuințelor afectate,da,False,"Organizație umanitară dedicată locuirii decente, activă în Prevenire și Intervenție, oferind sprijin pentru protejarea și refacerea locuințelor afectate."
+Societatea Națională de Cruce Roșie din România (SNCRR),Prevenire/ Pregătire,da,da,"Partener strategic major, implicat activ în Prevenire și Pregătire, oferind primul ajutor și asistență umanitară la scară națională."
+Universitatea Babeș-Bolyai,Prevenire,False,False,"Centru universitar de prestigiu care susține inițiativele de Prevenire prin expertiză academică și resurse educaționale."
+Asociația Națională a Salvatorilor Montani din România,Intervenție Căutare-salvare,False,False,"Structură operativă specializată în Intervenție și Căutare-salvare în zone montane și greu accesibile."
+Societatea Română de Televiziune (SRTv),Prevenire,False,False,"Instituție media publică cu rol cheie în Prevenire, asigurând informarea corectă și rapidă a populației."
+Serviciul de Ajutor Maltez în România,Intervenție/ Căutare-salvare,da,da,"Organizație cu tradiție în asistență umanitară, partener strategic pe zonele de Intervenție și Căutare-salvare."
+Asociația Salvatorilor Voluntari 4x4,Intervenție/ Căutare - salvare,da,False,"Grup de voluntari specializați în mobilitate off-road, vitali pentru Intervenție și Căutare-salvare în zone sinistrate inaccesibile."
+OMV Petrom și Petromed Solution SRL,Pregătire/ Prevenire/ Intervenție,False,False,"Partener din sectorul privat care contribuie cu resurse și expertiză în Pregătire, Prevenire și Intervenție."
+Asociația Companiilor Chimice din România (ROMCHIMICA),Intervenție/ Dezastre chimice,False,da,"Partener strategic specializat pe riscuri specifice, gestionând Intervenția în cazul Dezastrelor chimice."
+Asociația „Reducerea Riscului Seismic”,Prevenire,False,False,"Organizație tehnică dedicată exclusiv zonei de Prevenire, axată pe educație și expertiză în riscul seismic."
+Code 4 Romania,IT & C,da,False,"Comunitate de tehnologie civică ce dezvoltă soluții digitale (IT & C) pentru gestionarea crizelor și sprijinirea societății civile."
+Fundația Comunitară București,Pregătire/ Prevenire,False,False,"Fundație care mobilizează resurse locale pentru proiecte de Pregătire și Prevenire, crescând reziliența comunității urbane."
+Serviciul de Telecomunicații Speciale (STS),Prevenire/ Intervenție,da,da,"Instituție strategică a statului, asigurând suport tehnic critic pentru comunicații în fazele de Prevenire și Intervenție."
+Institutul Național de Cercetare – dezvoltare Aerospațială „Elie Carafoli” - INCAS,Intervenție/ Căutare –intervenție aeriană,False,False,"Institut de cercetare care oferă suport tehnologic avansat pentru Intervenție și operațiuni aeriene de căutare."
+Asociația SALVO,Intervenție/ Servicii sociale,False,False,"Organizație care combină Intervenția rapidă cu Serviciile sociale pentru a sprijini categoriile vulnerabile."
+Compania Națională de Transport al Energiei Electrice „Transelectrica” - SA,Intervenție/ Restabilirea stării de normalitate,da,False,"Operator național critic, esențial pentru Intervenție și Restabilirea stării de normalitate a infrastructurii energetice."
+E-Distribuție Banat S.A.,Intervenție/ Restabilirea stării de normalitate,False,False,"Operator regional de distribuție energie, activ în Intervenție și Restabilirea stării de normalitate în zona de vest."
+E-Distribuție Muntenia S.A.,Intervenție/ Restabilirea stării de normalitate,False,False,"Operator regional de distribuție energie, asigurând Intervenția și Restabilirea stării de normalitate în sudul țării."
+E-Distribuție Dobrogea S.A.,Intervenție/ Restabilirea stării de normalitate,False,False,"Operator regional de energie, focalizat pe Intervenție și Restabilirea stării de normalitate în zona Dobrogei."
+Universitatea de Arhitectură și Urbanism „Ion Mincu” - București,Cercetare în cadrul unui proiect,False,False,"Instituție academică ce contribuie prin Cercetare aplicată la planificarea urbană rezilientă."
+Asociația Asociația Medicală Română,Pregătire/ Cercetare,False,False,"For profesional medical implicat în Pregătirea personalului și Cercetare științifică pentru situații de urgență."
+Universitatea de Medicină și Farmacie „Carol Davila” - București,Pregătire/ Cercetare,False,False,"Centru universitar medical de top, furnizând expertiză în Pregătire și Cercetare medicală."
+Universitatea de Medicină și Farmacie din Craiova,Pregătire/ Cercetare,False,False,"Instituție academică regională implicată în Pregătirea cadrelor medicale și Cercetare."
+Universitatea de Medicină și Farmacie „Iuliu Hațieganu” - Cluj-Napoca,Pregătire/ Cercetare,False,False,"Pol de excelență medicală în Transilvania, activ în Pregătire și Cercetare pentru sănătate publică."
+Universitatea de Medicină și Farmacie „Grigore T. Popa” - Iași,Pregătire/ Cercetare,False,False,"Centru universitar major din Moldova, contribuind la Pregătire și Cercetare în medicină de urgență."
+Universitatea de Medicină Farmacie Științe și Tehnologie „George Emil Palade” din Târgu-Mureș,Pregătire/ Cercetare,False,False,"Instituție complexă de învățământ superior, activă pe palierele de Pregătire și Cercetare medicală și tehnologică."
+Universitatea de Medicină și Farmacie „Victor Babeș” - Timișoara,Pregătire/ Cercetare,False,False,"Centru academic din vestul țării, susținând sistemul prin Pregătire specializată și Cercetare."
+Fundația Estuar,Pregătire/ Răspuns,False,False,"Organizație dedicată sănătății mintale, oferind servicii de Pregătire și Răspuns psihologic în situații de criză."
+Asociația CSR Nest,Pregătire/ Prevenire,False,False,"Promotor al responsabilității sociale, dezvoltând programe de Pregătire și Prevenire în comunități."
+Organizația Salvați Copiii,Prevenire,False,False,"ONG internațional care prioritizează siguranța celor mici, cu focus puternic pe acțiuni de Prevenire."
+Societatea de Științe Istorice din România – filiala București,Prevenire,False,False,"Organizație culturală care contribuie la Prevenire prin educație și prezervarea memoriei instituționale."
+Societatea Română de Radiodifuziune,Prevenire,False,False,"Postul public de radio, infrastructură critică pentru Prevenire și diseminarea mesajelor de alertă."
+Asociația Română pentru Smart City,Prevenire,False,False,"Promotor al soluțiilor inteligente urbane, integrând tehnologia în strategii de Prevenire."
+Asociația Studenților la Construcții din București,Prevenire,False,False,"Organizație studențească ce mobilizează viitorii ingineri în acțiuni de Prevenire și evaluare a riscurilor."
+Asociația Proacta EDU,Prevenire,False,False,"ONG educațional axat pe Prevenire prin informarea și instruirea tinerilor."
+Asociația eLiberare,Prevenire (trafic persoane),False,False,"Organizație specializată în lupta împotriva traficului de persoane, activă în Prevenire și identificarea victimelor."
+Institutul pentru Studiul și Tratamentul Traumei,Prevenire,False,False,"Centru de expertiză psihologică, concentrat pe Prevenire și gestionarea impactului traumatic."
+Asociația Energie Inteligentă,Prevenire/ Pregătire,False,False,"Think-tank în domeniul energetic, oferind soluții de Prevenire și Pregătire pentru securitatea energetică."
+Global Focus,Prevenirea si combaterea dezinformării,False,False,"Centru de analiză politică și strategică, axat pe Prevenirea și combaterea dezinformării în situații de criză."
+Colegiul Psihologilor din România,Răspuns,False,False,"Autoritatea profesională a psihologilor, coordonând eforturile de Răspuns și suport psihologic."
+Asociația Câini de Salvare București,Intervenție Căutare-salvare,False,False,"Unitate chinologică antrenată pentru misiuni critice de Intervenție și Căutare-salvare urbană."
+Asociația Underdogs,Intervenție Căutare-salvare,False,False,"Grup de intervenție cu unități canine, specializat în operațiuni de Intervenție și Căutare-salvare."
+Asociația Clubul Câinilor Utilitari,Intervenție Căutare-salvare,False,False,"Club dedicat dresajului utilitar, oferind echipe pregătite pentru Intervenție și Căutare-salvare."
+Asociația Câinii S.A.R. „Gugulania”,Intervenție Căutare-salvare,False,False,"Echipă Mountain Safety K9, activă în Intervenție și Căutare-salvare în zone montane dificile."
+AUTONOM,Sprijin tehnic logistic,False,False,"Companie de mobilitate care oferă Sprijin tehnic logistic vital (flote auto) în gestionarea operațiunilor."
+Asociația Institutul de Cercetare Făgăraș,Pregătire/ Cercetare,da,False,"Institut de cercetare local, implicat în studii de Pregătire și Cercetare socială, activ și în criza ucraineană."
+Universitatea POLITEHNICA din București,Pregătire/Cercetare,False,False,"Cea mai mare universitate tehnică, contribuind cu inovație în Pregătire și Cercetare inginerească."
+Asociația Cluburilor Lions District 124 Romania,Pregătire/ Prevenire/ Intervenție,False,False,"Rețea internațională de voluntariat, activă pe toate palierele: Pregătire, Prevenire și Intervenție comunitară."
+Asociația Camera de Comerț Americană în România (AmCham),Pregătire/ Prevenire/ Intervenție,False,False,"Organizație de afaceri care mobilizează sectorul privat pentru Pregătire, Prevenire și Intervenție."
+UNSAR,Pregătire/ Prevenire,False,False,"Uniunea Asigurătorilor, promovând reziliența financiară prin programe de Pregătire și Prevenire."
+Universitatea din București Facultatea de Administrație și Afaceri,Pregătire/ Cercetare,False,False,"Facultate ce oferă suport academic prin Pregătire (practică studenți) și Cercetare administrativă."
+Asociația Sistemul National de Reciclare a Bateriilor (SNRB),Pregătire/ Prevenire,False,False,"Organizație de mediu care integrează componenta ecologică în Pregătire și Prevenire."
+Consiliul Național Român pentru Refugiați (CNRR),Pregătire/ Răspuns,da,False,"Organizație cheie în protecția refugiaților, oferind Pregătire juridică și Răspuns direct la nevoile acestora."
+Federația Națională a Ghizilor de Turism din România (FNGTR),Pregătire/ Răspuns,False,False,"Rețea de profesioniști în turism, adaptând resursele pentru Pregătire și Răspuns în gestionarea fluxurilor de persoane."
+Asociația Nevăzătorilor din România (ANR),Pregătire/Răspuns,False,False,"Organizație reprezentativă care asigură incluziunea persoanelor nevăzătoare în planurile de Pregătire și Răspuns."
+Asociația Națională a Surzilor din România (ANSR),Pregătire/Răspuns,False,False,"Organizație care facilitează comunicarea și accesul la informații (Pregătire/Răspuns) pentru persoanele cu deficiențe de auz."
+Asociația Jesuit Refugee Service (JRS),Intervenție/Servicii sociale,da,False,"Serviciu umanitar internațional, oferind Intervenție și Servicii sociale esențiale refugiaților și imigranților."
+Asociația Make Better,Prevenire / Pregătire,False,False,"Organizație axată pe dezvoltare urbană și reziliență, activă în Prevenire și Pregătire."
+Consiliul Național al Dizabilității din România (CNDR),Prevenire/ Pregătire,False,False,"Federație ce apără drepturile persoanelor cu dizabilități, asigurând integrarea lor în Prevenire și Pregătire."
+Autoritatea Națională pentru Protecția Drepturilor Persoanelor cu Dizabilități,Prevenire/ Pregătire,False,False,"Autoritate de stat care reglementează și monitorizează măsurile de Prevenire și Pregătire pentru grupurile vulnerabile."
