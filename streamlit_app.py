@@ -3,12 +3,12 @@ import pandas as pd
 from streamlit_agraph import agraph, Node, Edge, Config
 
 # ---------------------------------
-# 0. CONFIGURARE PAGINĂ & BRANDING
+# 0. CONFIGURARE PAGINĂ
 # ---------------------------------
 
 st.set_page_config(
     layout="wide",
-    page_title="Oswald Software", 
+    page_title="Ecosistem DSU", 
     page_icon="assets/button.svg",
     initial_sidebar_state="expanded"
 )
@@ -106,7 +106,7 @@ def map_domain_category(raw_piece: str) -> str:
     return raw_piece.strip()
 
 # ---------------------------------
-# 2. ÎNCĂRCARE DATE INIȚIALĂ
+# 2. ÎNCĂRCARE DATE
 # ---------------------------------
 
 @st.cache_data
@@ -124,9 +124,8 @@ def load_initial_data():
     # Asigurăm existența coloanelor
     if "Ukraine" not in df.columns: df["Ukraine"] = False
     if "Strategic" not in df.columns: df["Strategic"] = False
-    if "Description" not in df.columns: df["Description"] = "Fără descriere." # Default value
+    if "Description" not in df.columns: df["Description"] = "Fără descriere."
     
-    # Umplem valorile lipsă la descriere
     df["Description"] = df["Description"].fillna("Descriere indisponibilă.")
 
     def normalize_bool(val):
@@ -145,12 +144,9 @@ if "main_df" not in st.session_state:
         st.error("Fișierul 'data.csv' nu a fost găsit.")
 
 # ---------------------------------
-# 3. LAYOUT & LOGICĂ
+# 3. PREGĂTIRE DATE (NODURI & MUCHII)
 # ---------------------------------
 
-col_controls, col_graph = st.columns([1, 4])
-
-# Pregătire date curente
 current_df = st.session_state["main_df"].copy()
 current_df["Domains_List"] = current_df["Domain_Raw"].apply(clean_domains)
 
@@ -167,7 +163,7 @@ for idx, row in current_df.iterrows():
         "ukraine": row["Ukraine"],
         "strategic": row["Strategic"],
         "raw_domain": str(row["Domain_Raw"]),
-        "description": str(row["Description"]) # [NOU] Salvăm descrierea în nod
+        "description": str(row["Description"])
     }
 
     for raw_dom in row["Domains_List"]:
@@ -181,10 +177,6 @@ for idx, row in current_df.iterrows():
             }
         edges_list.append((p_id, d_id))
 
-# State Selecție
-if "selected_id" not in st.session_state:
-    st.session_state["selected_id"] = None
-
 # Liste pentru filtre/search
 all_domain_labels = sorted(list(set(
     info["label"] for info in nodes_dict.values() if info["type"] == "Domain"
@@ -193,18 +185,45 @@ all_partners_labels = sorted(list(set(
     info["label"] for info in nodes_dict.values() if info["type"] == "Partner"
 )))
 
+# ---------------------------------
+# 4. CONTROALE & LOGICĂ INTERFAȚĂ
+# ---------------------------------
+
+col_controls, col_graph = st.columns([1, 4])
+
+# Initializare key pentru dropdown daca nu exista
+if "selected_partner_search" not in st.session_state:
+    st.session_state["selected_partner_search"] = "- Toate -"
+
+# Initializare filtre domenii
 if "filter_domains" not in st.session_state:
     st.session_state["filter_domains"] = all_domain_labels
 
-# --- COLOANA STÂNGA: CONTROALE ---
+# --- COLOANA STÂNGA ---
 with col_controls:
     st.markdown("### Panou de control")
 
-    # SEARCH BAR
+    # --- SEARCH BAR SINCRONIZAT ---
     st.markdown("#### Caută Organizație")
+    
+    # Dropdown-ul controlează starea 'selected_partner_search'
+    # Dacă aceasta a fost modificată de un CLICK pe grafic (mai jos), dropdown-ul se va actualiza automat la rerun.
     search_options = ["- Toate -"] + all_partners_labels
-    selected_partner_search = st.selectbox("Alege un partener:", options=search_options)
-    is_search_active = selected_partner_search != "- Toate -"
+    
+    # Securizare: dacă valoarea din state nu e în listă (ex: date schimbate), resetăm
+    if st.session_state["selected_partner_search"] not in search_options:
+        st.session_state["selected_partner_search"] = "- Toate -"
+        
+    current_selection = st.selectbox(
+        "Alege un partener:", 
+        options=search_options,
+        key="selected_partner_search" 
+        # Key-ul leagă direct widgetul de session_state. 
+        # Modificarea widgetului actualizează state-ul.
+        # Modificarea state-ului (din cod) actualizează widgetul la următorul rerun.
+    )
+    
+    is_search_active = current_selection != "- Toate -"
 
     st.markdown("---")
 
@@ -217,7 +236,7 @@ with col_controls:
         </div>""", unsafe_allow_html=True
     )
 
-    # FILTRE
+    # FILTRE (Doar dacă nu e search activ)
     if not is_search_active:
         st.markdown("#### Filtrare domenii")
         c_btn1, c_btn2 = st.columns(2)
@@ -230,63 +249,47 @@ with col_controls:
 
         selected_domains = st.multiselect("Domenii vizibile:", options=all_domain_labels, key="filter_domains")
     else:
-        st.info(f"Filtru activ pe: **{selected_partner_search}**")
-        selected_domains = all_domain_labels
+        # Buton de Ieșire din modul Focus
+        st.info(f"Mod Focus: **{current_selection}**")
+        if st.button("⬅️ Vezi toate organizațiile"):
+            st.session_state["selected_partner_search"] = "- Toate -"
+            st.rerun()
+        selected_domains = all_domain_labels # In mod focus, ignorăm filtrul de domenii pentru a arăta tot ce e relevant
 
     st.markdown("---")
-    
-    # Buton Reset Zoom
-    if st.session_state["selected_id"]:
-        if st.button("⬅️ Înapoi la vedere generală"):
-            st.session_state["selected_id"] = None
-            st.rerun()
 
-    # --- DETALII NOD (CU DESCRIERE) ---
-    search_node_id = None
+    # --- AFISARE DETALII (Pe baza selecției din Dropdown) ---
+    # Găsim ID-ul nodului selectat în dropdown
+    focus_node_id = None
     if is_search_active:
         for nid, info in nodes_dict.items():
-            if info["label"] == selected_partner_search and info["type"] == "Partner":
-                search_node_id = nid
+            if info["label"] == current_selection and info["type"] == "Partner":
+                focus_node_id = nid
                 break
     
-    current_display_id = st.session_state["selected_id"]
-    if is_search_active and search_node_id:
-        current_display_id = search_node_id
+    if focus_node_id:
+        info = nodes_dict[focus_node_id]
+        
+        # Titlu & Descriere
+        st.markdown(f'<div class="info-card"><b>Partener DSU</b><br>{info["label"]}</div>', unsafe_allow_html=True)
+        if info.get("description") and info["description"] != "nan":
+                st.markdown(f'<div class="description-box">{info["description"]}</div>', unsafe_allow_html=True)
 
-    if current_display_id and current_display_id in nodes_dict:
-        info = nodes_dict[current_display_id]
+        ukr_text = "DA" if info["ukraine"] else "Nu"
+        strat_text = "DA" if info["strategic"] else "Nu"
 
-        if info["type"] == "Partner":
-            # Titlu Partener
-            st.markdown(f'<div class="info-card"><b>Partener DSU</b><br>{info["label"]}</div>', unsafe_allow_html=True)
-            
-            # [NOU] Afișare Descriere Contextuală
-            if info.get("description") and info["description"] != "nan":
-                 st.markdown(f'<div class="description-box">{info["description"]}</div>', unsafe_allow_html=True)
+        c1, c2 = st.columns(2)
+        c1.markdown(f'<div class="metric-box">Ucraina<br><b>{ukr_text}</b></div>', unsafe_allow_html=True)
+        c2.markdown(f'<div class="metric-box">Strategic<br><b>{strat_text}</b></div>', unsafe_allow_html=True)
 
-            ukr_text = "DA" if info["ukraine"] else "Nu"
-            strat_text = "DA" if info["strategic"] else "Nu"
+        st.markdown("<b>Domenii asociate:</b>", unsafe_allow_html=True)
+        domains = [nodes_dict[t]["label"] for s, t in edges_list if s == focus_node_id]
+        if domains:
+            for d in sorted(set(domains)):
+                st.markdown(f"- {d}")
 
-            c1, c2 = st.columns(2)
-            c1.markdown(f'<div class="metric-box">Ucraina<br><b>{ukr_text}</b></div>', unsafe_allow_html=True)
-            c2.markdown(f'<div class="metric-box">Strategic<br><b>{strat_text}</b></div>', unsafe_allow_html=True)
-
-            st.markdown("<b>Domenii asociate:</b>", unsafe_allow_html=True)
-            domains = [nodes_dict[t]["label"] for s, t in edges_list if s == current_display_id]
-            if domains:
-                for d in sorted(set(domains)):
-                    st.markdown(f"- {d}")
-
-        else:  # Domain
-            st.markdown(f'<div class="info-card"><b>Domeniu</b><br>{info["label"]}</div>', unsafe_allow_html=True)
-            partners = [nodes_dict[s]["label"] for s, t in edges_list if t == current_display_id]
-            st.markdown(f"Parteneri în domeniu: **{len(partners)}**")
-            if partners:
-                with st.expander("Vezi lista parteneri"):
-                    for p in sorted(set(partners)):
-                        st.markdown(f"- {p}")
     elif not is_search_active:
-        st.info("Selectează un nod sau caută o organizație.")
+        st.info("Selectează un partener din grafic sau din meniul de căutare.")
 
 
 # --- COLOANA DREAPTA: GRAF ---
@@ -295,6 +298,8 @@ with col_graph:
     
     nodes_viz = []
     edges_viz = []
+    
+    # Configurare Culori
     COLOR_PARTNER = "#00f2c3"
     COLOR_STRATEGIC = "#ffd700"
     COLOR_DOMAIN = "#fd79a8"
@@ -305,39 +310,47 @@ with col_graph:
         degree[s] = degree.get(s, 0) + 1
         degree[t] = degree.get(t, 0) + 1
 
-    # Filtrare Vizuală
+    # --- LOGICA DE VIZIBILITATE (FOCUS) ---
     visible_node_ids = set()
     
-    if is_search_active and search_node_id:
-        visible_node_ids.add(search_node_id)
+    if is_search_active and focus_node_id:
+        # MOD FOCUS: Arătăm DOAR partenerul selectat și domeniile lui
+        visible_node_ids.add(focus_node_id)
         for s, t in edges_list:
-            if s == search_node_id: visible_node_ids.add(t)
-            elif t == search_node_id: visible_node_ids.add(s)
+            if s == focus_node_id: visible_node_ids.add(t)
+            elif t == focus_node_id: visible_node_ids.add(s)
     else:
+        # MOD GENERAL: Filtrare după domenii
         for nid, info in nodes_dict.items():
             if info["type"] == "Domain" and info["label"] in selected_domains:
                 visible_node_ids.add(nid)
+        # Adăugăm partenerii conectați
         temp_partners = set()
         for s, t in edges_list:
             if t in visible_node_ids: temp_partners.add(s)
         visible_node_ids.update(temp_partners)
 
-    # Construire Noduri
+    # --- CONSTRUIRE OBIECTE GRAF ---
     for nid in visible_node_ids:
         info = nodes_dict[nid]
         if info["type"] == "Partner":
             full_label = info["label"]
-            if is_search_active and nid == search_node_id:
+            
+            # Dacă e nodul focusat, îl facem mare
+            if is_search_active and nid == focus_node_id:
                 display_label = full_label
-                size = 35
+                size = 40
+                font_size = 18
             else:
                 display_label = full_label if len(full_label) <= 20 else full_label[:20] + "..."
                 size = 14 + degree.get(nid, 1) * 0.4
+                font_size = 14
 
             color = COLOR_STRATEGIC if info.get("strategic") else COLOR_PARTNER
+            
             nodes_viz.append(Node(
                 id=nid, label=display_label, title=full_label, size=size,
-                shape="dot", color=color, font={"color": "white", "size": 14}
+                shape="dot", color=color, font={"color": "white", "size": font_size}
             ))
         else: # Domain
             nodes_viz.append(Node(
@@ -346,7 +359,6 @@ with col_graph:
                 color=COLOR_DOMAIN, font={"color": "#ffeef6", "size": 14}
             ))
 
-    # Construire Muchii
     for s, t in edges_list:
         if s in visible_node_ids and t in visible_node_ids:
             edges_viz.append(Edge(source=s, target=t, color="#2d3436", width=1.0))
@@ -363,11 +375,20 @@ with col_graph:
         },
     )
 
+    # Randare Graf
     clicked_id = agraph(nodes=nodes_viz, edges=edges_viz, config=config)
     
-    if clicked_id is not None and clicked_id != st.session_state["selected_id"]:
-        st.session_state["selected_id"] = clicked_id
-        st.rerun()
+    # --- LOGICA DE SINCRONIZARE: CLICK -> DROPDOWN ---
+    if clicked_id:
+        # Verificăm dacă s-a dat click pe un Partener
+        if clicked_id in nodes_dict and nodes_dict[clicked_id]["type"] == "Partner":
+            clicked_label = nodes_dict[clicked_id]["label"]
+            
+            # Dacă partenerul click-uit e diferit de cel din dropdown
+            if clicked_label != st.session_state["selected_partner_search"]:
+                st.session_state["selected_partner_search"] = clicked_label
+                st.rerun() # Forțăm reîncărcarea pentru a actualiza dropdown-ul și a intra în modul Focus
+
 
 # --- EDITOR DATE ---
 st.divider()
@@ -381,7 +402,7 @@ with st.expander("Editor Date (Live Update)", expanded=False):
         key="data_editor_component",
         column_config={
             "Partner": st.column_config.TextColumn("Partener", width="medium"),
-            "Description": st.column_config.TextColumn("Descriere", width="large"), # [NOU]
+            "Description": st.column_config.TextColumn("Descriere", width="large"),
             "Domain_Raw": st.column_config.TextColumn("Domenii", width="medium"),
             "Strategic": st.column_config.CheckboxColumn("Strategic?", width="small"),
             "Ukraine": st.column_config.CheckboxColumn("Ucraina?", width="small")
